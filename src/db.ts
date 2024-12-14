@@ -3,7 +3,7 @@ import mongoose, { mongo, Schema, model } from "mongoose";
 main().catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect('mongodb+srv://cyberkaps:kalpesh@cluster0.dyv70o5.mongodb.net/second-brain');
+  await mongoose.connect('');
 
 }
 
