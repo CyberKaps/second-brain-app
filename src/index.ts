@@ -3,8 +3,9 @@ import express from "express";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 const JWT_PASSWORD = "kalpesh"
+import { userMiddleware } from "./middleware";
 
-import { userModel } from "./db"
+import { contentModel, userModel } from "./db"
 
 
 const app = express();
@@ -56,15 +57,48 @@ app.post("/api/v1/signin",async (req,res) => {
 
 })
 
-app.post("/api/v1/content", (req,res) => {
+app.post("/api/v1/content",userMiddleware,async (req,res) => {
+    const {link, type, title } = req.body;
+
+    await contentModel.create({
+        link,
+        type,
+        title,
+        tags: [],
+        //@ts-ignore
+        userId: req.userId
+
+    })
+    res.json({
+        message: "Content added"
+    })
 
 })
 
-app.get("/api/v1/content", (req,res) => {
+app.get("/api/v1/content",userMiddleware, async (req,res) => {
+    //@ts-ignore
+    const userId = req.userId;
+    const content = await contentModel.find({
+        userId: userId
+    }).populate("userId", "username")
+    res.json({
+        content
+    })
 
 })
 
-app.delete("/api/v1/content", (req,res) => {
+app.delete("/api/v1/content",userMiddleware, async (req,res) => {
+
+    const contentId = req.body.contentId;
+
+    await contentModel.deleteMany({
+        contentId,
+        //@ts-ignore
+        userId: req.userId
+    })
+    res.json({
+        message: "deleted"
+    })
 
 })
 

@@ -25,7 +25,8 @@ const contentSchema = new Schema({
     type: { type: String, required: true },
     title: { type: String, required: true },
     tags: [{ type: ObjetId, required: true, ref: 'Tag' }],
-    userId: {type:ObjetId, ref: 'User', required: true }
+    userId: {type:ObjetId, ref: 'Users', required: true },
+    // authorId: {type:ObjetId, ref: 'Users', required: true }
  
 });
 
@@ -37,6 +38,6 @@ const linnkSchema = new Schema({
 
 
 export const userModel = model("Users", userSchema);
-const tagModel = model("Tags", tagSchema);
-const contentModel = model("Content", contentSchema);
-const linkModel = model("Links", linnkSchema);
+export const tagModel = model("Tags", tagSchema);
+export const contentModel = model("Content", contentSchema);
+export const linkModel = model("Links", linnkSchema);
