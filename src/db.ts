@@ -3,11 +3,11 @@ import mongoose, { mongo, Schema, model } from "mongoose";
 main().catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect('');
+  await mongoose.connect('mongodb+srv://cyberkaps:kalpesh@cluster0.dyv70o5.mongodb.net/second-brain');
 
 }
 
-const ObjetId = mongoose.Types.ObjectId;
+const objectidd = mongoose.Types.ObjectId;
 
 const userSchema = new Schema({
 
@@ -18,26 +18,25 @@ const userSchema = new Schema({
 const tagSchema = new Schema({
     title: {type: String, required: true, unique: true }
 })
-
 const contentSchema = new Schema({
     
     link: { type: String, required: true },
     type: { type: String, required: true },
     title: { type: String, required: true },
-    tags: [{ type: ObjetId, required: true, ref: 'Tag' }],
-    userId: {type:ObjetId, ref: 'Users', required: true },
-    // authorId: {type:ObjetId, ref: 'Users', required: true }
+    tags: [{ type: objectidd, required: true, ref: 'Tag' }],
+    userId: {type:objectidd, ref: 'Users', required: true },
+    // authorId: {type:objectidd, ref: 'Users', required: true }
  
 });
 
 
-const linnkSchema = new Schema({
+const linkSchema = new Schema({
     hash: {type: String, required: true},
-    userId: {type: ObjetId, required: true, ref: 'User'}
+    userId: {type: objectidd, required: true, ref: 'User', unique: true}
 })
 
 
 export const userModel = model("Users", userSchema);
 export const tagModel = model("Tags", tagSchema);
 export const contentModel = model("Content", contentSchema);
-export const linkModel = model("Links", linnkSchema);
+export const linkModel = model("Links", linkSchema);

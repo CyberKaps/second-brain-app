@@ -5,7 +5,8 @@ import jwt from "jsonwebtoken";
 const JWT_PASSWORD = "kalpesh"
 import { userMiddleware } from "./middleware";
 
-import { contentModel, userModel } from "./db"
+import { contentModel, linkModel, userModel } from "./db"
+import { random } from "./utils";
 
 
 const app = express();
@@ -102,11 +103,82 @@ app.delete("/api/v1/content",userMiddleware, async (req,res) => {
 
 })
 
-app.post("/api/v1/brain/share", (req,res) => {
+app.post("/api/v1/brain/share",userMiddleware, async (req,res) => {
+    const {share} = req.body;
+    if (share) {
+
+        const existingHash = await linkModel.findOne({
+            //@ts-ignore
+            userId: req.userId
+        })
+
+        if(existingHash){
+            res.json({
+                hash: existingHash.hash
+            })
+            return;
+        }
+
+        const hash = random(10)
+        await linkModel.create({
+            //@ts-ignore-
+            userId: req.userId,
+            hash: hash
+
+        })
+        res.json({
+             hash
+        })
+    } else {
+        await linkModel.deleteOne({
+            //@ts-ignore
+            userId: req.userId
+        })
+        res.json({
+            message: "removed link"
+        })
+    }
+    
 
 })
 
-app.get("/api/v1/brain/:shareLink", (req,res) => {
+app.get("/api/v1/brain/:shareLink", async (req,res) => {
+    const hash = req.params.shareLink;
+
+    const link = await linkModel.findOne({
+        hash: hash
+
+    });
+    if (!link) {
+        res.status(411).json({
+            message: "sorry incorrect input"
+        })
+        return;
+    } 
+    
+
+    const content = await contentModel.find({
+        
+        userId: link.userId
+    })
+    const user = await userModel.findOne({
+        _id: link.userId
+
+    })
+
+    if (!user) {
+        res.status(411).json({
+            message: "user not found, error should ideally not happen"
+        })
+        return;
+    } 
+
+    res.json({
+        //@ts-ignore
+        username: user.username,
+        content: content
+    })
+    
 
 })
 
